@@ -12,6 +12,8 @@ import java.util.UUID;
 
 public interface TicketRepository extends JpaRepository<Ticket,Integer> {
 
+    Optional<Ticket> findByTrackingId(UUID trackingId);
+
     @Query("select e from Ticket e where e.trackingId = :trackingId")
     Optional<Ticket> findTicketByTrackingId(@Param("trackingId") UUID trackingId);
 

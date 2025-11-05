@@ -5,6 +5,7 @@ import com.example.backend.utils.EventStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -34,7 +35,7 @@ public class Event extends BaseEntity {
     private String location;
 
     @Column(nullable = false)
-    private Number capacity;
+    private Integer capacity;
 
     @Column(nullable = false)
     private LocalDateTime startDateTime;
@@ -43,7 +44,7 @@ public class Event extends BaseEntity {
     private LocalDateTime endDateTime;
 
     @Column(nullable = false)
-    private float price;
+    private Double price;
 
     @Enumerated(EnumType.STRING)
     private EventStatus status;
@@ -56,8 +57,8 @@ public class Event extends BaseEntity {
     private Organizer organizer;
 
     public Event(String title, String description,
-                 String location, Number capacity, LocalDateTime startDateTime,
-                 LocalDateTime endDateTime, float price, EventStatus status,
+                 String location, Integer capacity, LocalDateTime startDateTime,
+                 LocalDateTime endDateTime, double price, EventStatus status,
                  List<String> images, Organizer organizer) {
         this.setTitle(title);
         this.setDescription(description);

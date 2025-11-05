@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Banner } from './banner';
+import { OrganizerLayout } from './organizer-layout';
 
-describe('Banner', () => {
-  let component: Banner;
-  let fixture: ComponentFixture<Banner>;
+describe('OrganizerLayout', () => {
+  let component: OrganizerLayout;
+  let fixture: ComponentFixture<OrganizerLayout>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Banner]
+      imports: [OrganizerLayout]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Banner);
+    fixture = TestBed.createComponent(OrganizerLayout);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

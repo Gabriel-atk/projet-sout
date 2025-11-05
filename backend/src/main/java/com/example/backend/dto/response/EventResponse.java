@@ -1,9 +1,12 @@
 package com.example.backend.dto.response;
 
+import lombok.Builder;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record EventReponse(
+@Builder
+public record EventResponse(
         UUID trackingId,
         String title,
         String description,

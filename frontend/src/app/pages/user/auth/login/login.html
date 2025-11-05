@@ -13,6 +13,11 @@
     </div>
 
     <div class="bg-white rounded-xl shadow-sm p-8">
+      @if (errorMessage){
+        <div class="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm font-inter">
+          {{errorMessage}}
+        </div>
+      }
       <form [formGroup]="connexionForm" (ngSubmit)="onSubmit()">
 
         <div class="mb-6">
@@ -54,7 +59,12 @@
             [disabled]="!connexionForm.valid"
             class="w-full bg-teal-700 hover:bg-teal-800 text-white font-semibold px-8 py-3 rounded-lg transition shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Se connecter
+            @if (isLoading){
+              <span>Connexion...</span>
+            }
+            @if (!isLoading){
+              <span>Se connecter</span>
+            }
           </button>
         </div>
       </form>

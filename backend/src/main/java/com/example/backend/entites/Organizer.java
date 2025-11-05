@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @DiscriminatorValue("ORGANIZER")
 public class Organizer extends User{
+    private String organizerName;
     public Organizer(String firstName, String lastName, String email, String password) {
         super(firstName, lastName, email, password);
         this.setRole(Role.ORGANIZER);

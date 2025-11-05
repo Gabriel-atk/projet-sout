@@ -32,4 +32,8 @@ public class Reservation {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @ManyToOne
+    @JoinColumn(name = "event_id")
+    private Event event;
+
 }
