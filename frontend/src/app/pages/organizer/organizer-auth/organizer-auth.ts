@@ -1,7 +1,7 @@
 import {Component, inject, OnDestroy} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
-import {OrganizerAuthService} from '../services/organizer.auth.service';
+import {OrganizerAuthService} from '../../../services/organizer.auth.service';
 import {Subscription} from 'rxjs';
 
 @Component({
@@ -49,7 +49,7 @@ export class OrganizerAuth implements OnDestroy{
             this.successMessage = 'Code envoyé ! Vérifiez votre boîte mail.';
             setTimeout(() => this.successMessage = '', 3000);
           } else {
-            this.errorMessage = 'Erreur lors de l\'envoi du code';
+            this.errorMessage = 'Erreur lors de l\'envoi du code !';
           }
         },
         error: (error) => {

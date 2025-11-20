@@ -2,21 +2,21 @@ import {inject, Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {catchError, map, Observable, of} from 'rxjs';
 export interface Reservation {
-  id: string;
+  uuid: string;
   title: string;
   eventDateTime: Date;
   ticketCount: number;
   totalPrice: number;
   bookingDate: Date;
   eventId: string;
-  userId: string;
+  //userId: string;
 }
 @Injectable({
   providedIn: 'root'
 })
 export class ReservationService {
   private http=inject(HttpClient)
-  private readonly API_URL = 'http://localhost:3000';
+  private readonly API_URL = 'http://localhost:8080/api';
 
   /**
    * Récupérer toutes les réservations de l'utilisateur connecté
@@ -32,7 +32,7 @@ export class ReservationService {
       'Authorization': `Bearer ${token}`
     });
 
-    return this.http.get<any>(`${this.API_URL}/reservations/user`, { headers }).pipe(
+    return this.http.get<any>(`${this.API_URL}/user/reservations`, { headers }).pipe(
       map((result: any)=>{
         if (result.reservations && Array.isArray(result.reservations)){
           return result.reservations.map((r: any)=>({

@@ -9,13 +9,14 @@ import {
 } from '@angular/forms';
 import {HttpClient} from '@angular/common/http';
 import {RegisterCredentials, RegisterService} from '../../../../services/register.service';
-import {Router} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-register',
   imports: [
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RouterLink
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
@@ -33,15 +34,17 @@ export class Register implements OnDestroy{
 
 
   constructor() {
-    this.inscriptionForm = this.fb.group({
-      nom: ['', Validators.required, Validators.minLength(3)],
-      prenom: ['', Validators.required, Validators.minLength(3)],
-      indicatif: ['+228', Validators.required],
-      telephone: ['', [Validators.required, Validators.pattern(/^[0-9]{8}$/)]],
-      email: ['', [Validators.required, Validators.email]],
-      motDePasse: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', Validators.required]
-    }, { validators: this.passwordMatchValidator });
+    this.inscriptionForm = this.fb.group(
+      {
+        nom: ['', [Validators.required, Validators.minLength(3)]],
+        prenom: ['', [Validators.required, Validators.minLength(3)]],
+        indicatif: ['+228', [Validators.required]],
+        telephone: ['', [Validators.required, Validators.pattern(/^[0-9]{8}$/)]],
+        email: ['', [Validators.required, Validators.email]],
+        motDePasse: ['', [Validators.required, Validators.minLength(8)]],
+        confirmPassword: ['', [Validators.required]]
+      },
+      {validators: this.passwordMatchValidator});
   }
 
   ngOnDestroy(): void {
@@ -66,7 +69,7 @@ export class Register implements OnDestroy{
    * Vérifier si les mots de passe correspondent
    */
   get passwordsMatch():boolean{
-    const password=this.inscriptionForm.get('password')?.value;
+    const password=this.inscriptionForm.get('motDePasse')?.value;
     const confirmPassword = this.inscriptionForm.get('confirmPassword')?.value;
     return password === confirmPassword;
   }
@@ -81,7 +84,7 @@ export class Register implements OnDestroy{
 
 
   onSubmit() {
-      if (this.inscriptionForm.invalid) {
+      if (this.inscriptionForm.valid) {
         this.isLoading = true;
         this.errorMessage = '';
         this.successMessage = '';
@@ -93,7 +96,9 @@ export class Register implements OnDestroy{
           lastName: this.inscriptionForm.value.nom,
           email: this.inscriptionForm.value.email,
           password: this.inscriptionForm.value.motDePasse,
-          telephone: fullPhone
+          phone: fullPhone,
+          role: 'USER',
+          country: 'TG'
         };
 
         this.registerSubscription=this.registerService.register(credentials).subscribe({

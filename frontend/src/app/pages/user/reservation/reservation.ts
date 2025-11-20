@@ -66,34 +66,34 @@ export class Reservation implements OnInit, OnDestroy {
     setTimeout(() => {
       this.reservations = [
         {
-          id: '1',
+          uuid: '1',
           title: 'Concert Jazz Festival',
           eventDateTime: new Date('2025-12-15T20:00:00'),
           ticketCount: 2,
           totalPrice: 15000,
           bookingDate: new Date('2025-10-20T10:30:00'),
           eventId: 'evt001',
-          userId: this.user()?.id || 'user001'
+          //userId: this.user()?.id || 'user001'
         },
         {
-          id: '2',
+          uuid: '2',
           title: 'Match de Football - Final',
           eventDateTime: new Date('2025-11-30T18:00:00'),
           ticketCount: 4,
           totalPrice: 8000,
           bookingDate: new Date('2025-10-25T14:20:00'),
           eventId: 'evt002',
-          userId: this.user()?.id || 'user001'
+          //userId: this.user()?.id || 'user001'
         },
         {
-          id: '3',
+          uuid: '3',
           title: 'Festival de Musique Urbaine',
           eventDateTime: new Date('2025-12-01T19:00:00'),
           ticketCount: 1,
           totalPrice: 5000,
           bookingDate: new Date('2025-10-15T09:00:00'),
           eventId: 'evt003',
-          userId: this.user()?.id || 'user001'
+          //userId: this.user()?.id || 'user001'
         }
       ];
       this.isLoading = false;

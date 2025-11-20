@@ -1,0 +1,41 @@
+<div class="flex-col rounded-lg font-inter shadow-lg overflow-hidden transition-shadow duration-100 max-w-md">
+  <div class="relative">
+    <img [src]="event.images?.[0] || 'assets/default-event.jpg'"
+         alt="{{event.name}}"
+         class="w-full h-64 object-cover"/>
+    @if (isExpired()){
+      <div
+        class="absolute top-4 right-4 bg-red-600 text-white px-6 py-2 font-bold text-sm transform rotate-45 origin-top-right"
+        style="box-shadow: 0 4px 6px rgba(0,0,0,0.3);"
+      >
+        Expiré
+      </div>
+    }
+  </div>
+
+  <div class="p-6 ">
+    <div class="flex items-start gap-4 mb-4 text-sm text-gray-700">
+        <svg class="w-5 h-5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        <span>
+          Débute le {{formatDate(event.startDateTime)}}
+          @if (event.endDateTime){
+            <span> - {{formatDate(event.endDateTime)}}</span>
+          }
+        </span>
+    </div>
+
+
+
+    <h3 class="text-xl font-bold font-inter text-black mb-6 min-h-[3rem]">{{event.name}}</h3>
+
+    <button class="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold font-inter py-3 px-6 rounded transition-colors duration-200"
+    (click)="onReserve()">
+      Réserver
+    </button>
+  </div>
+</div>

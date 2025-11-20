@@ -13,7 +13,7 @@ export interface Credentials {
 export class LoginService {
 
   private http= inject(HttpClient)
-  private readonly API_URL = 'http://localhost:3000';
+  private readonly API_URL = 'http://localhost:8080/api';
 
   user = signal<User | null | undefined >(undefined)
 

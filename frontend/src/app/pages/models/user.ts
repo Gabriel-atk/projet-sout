@@ -2,9 +2,11 @@ export class User {
   id!: string;
   firstName!: string;
   lastName!: string;
+  telephone!: string;
   email!: string;
   password!: string;
-  telephone!: string;
+  role = 'USER';
+  country='TOGO';
 
 
 

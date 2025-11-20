@@ -16,48 +16,39 @@
       </div>
 
       <!-- Menu Navigation -->
-      <div class="hidden md:flex items-center space-x-5">
-        <a routerLink="/home"
-           routerLinkActive="text-indigo-600 border-b-2 border-indigo-600"
-           [routerLinkActiveOptions]="{exact: false}"
-           class="text-black font-inter font-bold hover:text-indigo-600 transition">Accueil</a>
+      <div class="hidden md:flex items-center space-x-5 text-xl">
+        <a routerLink="/"
+           routerLinkActive="!text-black border-b-2 border-black"
+           [routerLinkActiveOptions]="{exact: true}"
+           class="text-gray-500 font-inter hover:text-black font-bold transition">Accueil</a>
         <a routerLink="/events"
-           routerLinkActive="text-indigo-600 border-b-2 border-indigo-600"
+           routerLinkActive="!text-black border-b-2 border-black"
            [routerLinkActiveOptions]="{exact: false}"
-           class="text-black font-inter font-bold hover:text-indigo-600 transition">Événements</a>
+           class="text-gray-500 font-inter font-bold hover:text-black transition">Événements</a>
         <a routerLink="/reservations"
-           routerLinkActive="text-indigo-600 border-b-2 border-indigo-600"
+           routerLinkActive="!text-black border-b-2 border-black"
            [routerLinkActiveOptions]="{exact: false}"
-           class="text-black font-inter font-bold hover:text-indigo-600 transition">Reservations</a>
+           class="text-gray-500 font-inter font-bold hover:text-black transition">Mes tickets</a>
         <a routerLink="/contact"
-           routerLinkActive="text-indigo-600 border-b-2 border-indigo-600"
+           routerLinkActive="!text-black border-b-2 border-black"
            [routerLinkActiveOptions]="{exact: false}"
-           class="text-black font-inter font-bold hover:text-indigo-600 transition">Contact</a>
+           class="text-gray-500 font-inter font-bold hover:text-black transition">Contact</a>
       </div>
 
       <!-- Search & Auth Buttons -->
       <div class="flex items-center space-x-4">
         <!-- Search Bar -->
-        <div class="hidden lg:flex items-center bg-gray-100 rounded-md px-4 py-2 w-64">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.35-4.35"></path>
-          </svg>
-          <input
-            type="text"
-            placeholder="Rechercher un événement..."
-            class="bg-transparent outline-none text-sm w-full text-gray-700 font-inter"
-          />
-        </div>
+
 
         @if (!isLoggedIn()) {
           <ng-container>
-            <button routerLink="/login" class="bg-indigo-600 text-white font-inter text-center px-6 py-2 rounded-md font-medium hover:bg-indigo-700">
+            <button routerLink="/login" class="bg-black text-white font-inter text-center px-6 py-2 rounded font-medium ">
               Connexion
             </button>
-            <button routerLink="/inscription" class="border-2 border-indigo-200 font-inter text-indigo-600 px-6 py-2 rounded-md font-medium ">
+            <button routerLink="/inscription" class="border-2 border-gray-300 font-inter text-gray-900 px-6 py-2 rounded font-medium ">
               Inscription
             </button>
+
           </ng-container>
         }
 
@@ -67,8 +58,10 @@
               <button
               (click)="toggleProfileMenu()"
               class="flex items-center space-x-2 focus:outline-none">
-                <div class="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white font-semibold hover:bg-indigo-700 transition cursor-pointer">
-                  {{getUserInitials()}}
+                <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-300 hover:border-black transition cursor-pointer">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2C9.51472 2 7.5 4.01472 7.5 6.5C7.5 8.98528 9.51472 11 12 11C14.4853 11 16.5 8.98528 16.5 6.5C16.5 4.01472 14.4853 2 12 2Z" fill="black"/><path d="M12 12.5C8.73708 12.5 6.14047 14.213 4.77277 16.7569C4.19622 17.8293 4.41122 18.9365 5.05292 19.7348C5.67643 20.5105 6.69558 21 7.79526 21H16.2047C17.3044 21 18.3236 20.5105 18.9471 19.7348C19.5888 18.9365 19.8038 17.8293 19.2272 16.7569C17.8595 14.213 15.2629 12.5 12 12.5Z" fill="black"/>
+                  </svg>
                 </div>
               </button>
               @if (isProfileMenuOpen) {
@@ -81,7 +74,7 @@
                     Mon profil
                   </a>
                   <a routerLink="/reservations" (click)="closeProfileMenu()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                    Mes réservations
+                    Mes tickets
                   </a>
                   <a routerLink="/parametres" (click)="closeProfileMenu()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                     Paramètres

@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { MainLayout } from './layout/main-layout/main-layout';
 import { OrganizerLayout } from './layout/organizer-layout/organizer-layout';
-import { Evenements } from './pages/user/evenements/evenements/evenements';
+//import { Evenements } from './pages/user/evenements/events-list/evenements';
 import { authGuard } from './pages/user/auth/auth.guard';
 
 export const routes: Routes = [
@@ -17,7 +17,8 @@ export const routes: Routes = [
       },
       {
         path: 'events',
-        component: Evenements,
+        //component: Evenements,
+        loadComponent: () => import('./pages/user/evenements/events-list/evenements').then(m => m.Evenements),
         title: 'Événements - EventTicket'
       },
       {
@@ -35,6 +36,17 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/user/reservation/reservation').then(m => m.Reservation),
         title: 'Mes Réservations - EventTicket',
         canActivate: [authGuard]
+      },
+      {
+        path: 'my-tickets',
+        loadComponent: () => import('./pages/user/tickets/tickets').then(m => m.Tickets),
+        title: 'Mes Billets - EventTicket',
+        canActivate: [authGuard]
+      },
+      {
+        path: 'contact',
+        loadComponent: () => import('./pages/user/contact/contact').then(m => m.Contact),
+        title: 'Contact - EventTicket'
       }
     ]
   },
@@ -51,9 +63,9 @@ export const routes: Routes = [
       },
       {
         path: 'dashboard',
-        //loadComponent: () => import('./pages/organizer/dashboard/dashboard').then(m => m.OrganizerDashboard),
+        loadComponent: () => import('./pages/organizer/organizer-dashboard/organizer-dashboard').then(m => m.OrganizerDashboard),
         title: 'Dashboard Organisateur - EventTicket',
-        canActivate: [authGuard] // Utilisez un guard spécifique pour les organisateurs si nécessaire
+        //canActivate: [authGuard] // Utilisez un guard spécifique pour les organisateurs si nécessaire
       },
       {
         path: '',

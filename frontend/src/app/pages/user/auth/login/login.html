@@ -30,9 +30,12 @@
             class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="votre@email.com"
           />
-          <div *ngIf="connexionForm.get('email')?.invalid && connexionForm.get('email')?.touched" class="text-red-500 text-sm mt-1">
-            Email invalide
-          </div>
+          @if (connexionForm.get('email')?.invalid && connexionForm.get('email')?.touched){
+            <div class="text-red-500 text-sm mt-1">
+              Email invalide
+            </div>
+          }
+
         </div>
 
         <div class="mb-6">
