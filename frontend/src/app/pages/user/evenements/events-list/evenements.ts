@@ -60,7 +60,6 @@ export class Evenements implements OnInit {
 
   resetSearch() {
     this.searchQuery = '';
-    //this.loadEvents();
     this.filteredEvents = this.events;
   }
 

@@ -1,4 +1,4 @@
-import {Component, computed, inject, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, computed, inject, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {TicketsPaidService} from '../../../services/tickets-paid.service';
 import {LoginService} from '../../../services/login.service';
 import {catchError, map, Observable, of, Subscription} from 'rxjs';
@@ -38,6 +38,8 @@ export class Tickets implements OnInit , OnDestroy{
   private loginService=inject(LoginService)
   private ticketService=inject(TicketsPaidService)
   private eventService=inject(EventsService)
+  private cdr=inject(ChangeDetectorRef)
+  private ngZone=inject(NgZone)
 
   user=this.loginService.user;
   isLoggedIn=computed(()=>this.user() !==null && this.user() !== undefined);
@@ -55,25 +57,36 @@ export class Tickets implements OnInit , OnDestroy{
     }
   }
 
+
+
   private loadTickets():void {
     const userId=this.user()?.id;
     if (!userId){
       this.errorMessage='Utilisateur non authentifié.';
       return;
     }
-    this.isLoading=true;
-    this.errorMessage='';
+    this.ngZone.run(() => {
+      this.isLoading = true;
+      this.errorMessage = '';
+      this.cdr.detectChanges();
+    });
 
     this.ticketsSubscription=this.ticketService.getUserTickets(userId).subscribe({
       next: (tickets) => {
-        this.tickets=tickets;
-        this.isLoading=false;
-        console.log('Tickets chargés:', tickets);
+        this.ngZone.run(() => {
+          this.tickets = tickets;
+          this.isLoading = false;
+          console.log('Tickets chargés:', tickets);
+          this.cdr.detectChanges();
+        });
       },
       error: (error) => {
         console.error('Erreur lors du chargement des tickets:', error);
-        this.isLoading=false;
-        this.errorMessage='Impossible de charger vos tickets. Veuillez réessayer.';
+        this.ngZone.run(() => {
+          this.isLoading = false;
+          this.errorMessage = 'Impossible de charger vos tickets. Veuillez réessayer.';
+          this.cdr.detectChanges();
+        });
       }
     })
   }
@@ -83,7 +96,10 @@ export class Tickets implements OnInit , OnDestroy{
     this.eventService.getEventByUuid(eventId).subscribe({
       next: (event) => {
         if (event) {
-          this.eventCache[eventId] = event;
+          this.ngZone.run(() => {
+            this.eventCache[eventId] = event;
+            this.cdr.detectChanges();
+          });
         }
       },
       error: (error) => {
@@ -92,12 +108,7 @@ export class Tickets implements OnInit , OnDestroy{
     })
   }
 
-  /*getEventName(ticket: PurchasedTicket): Observable<string | null>{
-    return this.eventService.getEventByUuid(ticket.eventTrackingId).pipe(
-      map((event) => event ? event.name : null),
-      catchError(()=>of(null))
-    );
-  }*/
+
 
   getEventName(ticket: PurchasedTicket): string{
     const eventId = ticket.eventTrackingId;

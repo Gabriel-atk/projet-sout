@@ -3,13 +3,14 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {catchError, map, Observable, of} from 'rxjs';
 import {Reservation} from './reservation.service';
 import {PurchasedTicket} from '../pages/user/tickets/tickets';
+import {environment} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TicketsPaidService {
   private http=inject(HttpClient)
-  private readonly API_URL = 'http://localhost:8080/api';
+  private readonly API_URL = environment.apiURL;
 
   getUserTickets(userId: string): Observable<PurchasedTicket[]>{
     const token = localStorage.getItem('token');

@@ -2,6 +2,7 @@ import {inject, Injectable, signal} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {User} from '../pages/models/user';
 import {catchError, map, Observable, of, tap} from 'rxjs';
+import {environment} from '../../environments/environment';
 
 export interface Credentials {
   email: string;
@@ -13,69 +14,16 @@ export interface Credentials {
 export class LoginService {
 
   private http= inject(HttpClient)
-  private readonly API_URL = 'http://localhost:8080/api';
+  private readonly API_URL = environment.apiURL;
 
-  user = signal<User | null | undefined >(undefined)
+  user = signal<User | null>(null)
+
+  setUser(value: User | null) {
+    this.user.set(value);
+  }
 
   constructor() {
     this.checkCurrentUser();
-  }
-
-  login(credentials: Credentials): Observable<User | null | undefined>{
-    return this.http.post<User>(`${this.API_URL}/user/login`, credentials).pipe(
-      tap((result: any) => {
-        localStorage.setItem('token', result['token'])
-        const userB = new User(result.user);
-        this.user.set(userB);
-      }),
-      map(() => this.user()),
-      catchError((error)=>{
-        console.error('Erreur de connexion:', error);
-        this.user.set(null);
-        return of(null);
-      })
-    );
-  }
-
-  /*getUser(): Observable<User | null | undefined>{
-    return this.http.get('/users').pipe(
-      tap((result: any) => {
-        const userB = new User(result.user);
-        this.user.set(userB);
-      }),
-      map(() => this.user())
-    )
-  }*/
-
-  /**
-   * Récupérer l'utilisateur connecté
-   */
-
-  getUser(): Observable<User | null | undefined> {
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-      this.user.set(null);
-      return of(null);
-    }
-
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-
-    return this.http.get<any>(`/user`, { headers }).pipe(
-      tap((result: any) => {
-        const userB = new User(result.user);
-        this.user.set(userB);
-      }),
-      map(() => this.user()),
-      catchError((error) => {
-        console.error('Erreur lors de la récupération de l\'utilisateur:', error);
-        this.user.set(null);
-        localStorage.removeItem('token');
-        return of(null);
-      })
-    );
   }
 
   /**
@@ -83,39 +31,57 @@ export class LoginService {
    */
   checkCurrentUser(): void {
     const token = localStorage.getItem('token');
+    const rawUser=localStorage.getItem('user');
 
-    if (token) {
-      this.getUser().subscribe();
-    } else {
-      this.user.set(null);
+    if (!token || !rawUser || rawUser === 'undefined' || rawUser === 'null') {
+      this.logout();
+      return;
+    }
+
+    try {
+      this.user.set(new User(JSON.parse(rawUser)));
+    }catch {
+      this.logout();
     }
   }
 
-  /*logout(): Observable<null> {
-    return this.http.get('url').pipe(
-      tap((result: any) => {
-        localStorage.removeItem('token')
-        this.user.set(null);
-      })
-    )
-  }*/
+  login(credentials: Credentials): Observable<User | null>{
+    return this.http.post<any>(`${this.API_URL}/users/login`, credentials).pipe(
+      tap(result => {
+        //localStorage.setItem('token', result['token'])
+        //localStorage.setItem('user', JSON.stringify(result.user))
+        //this.user.set(new User(result.user));
+        const userPayload = result.user ?? result.data ?? result;
+        if (!userPayload) {
+          throw new Error('Utilisateur manquant dans la réponse');
+        }
 
-  /**
-   * Déconnexion de l'utilisateur
-   */
+        if (result.token) {
+          localStorage.setItem('token', result.token);
+        }
+
+        localStorage.setItem('user', JSON.stringify(userPayload));
+        this.user.set(new User(userPayload));
+        localStorage.setItem('userTrackingId', result.trackingId)
+      }),
+      map(() => this.user()),
+      catchError((err)=>{
+        console.error('Erreur de connexion:', err);
+        this.logout();
+        return of(null);
+      })
+    );
+  }
+
   logout(): void {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     this.user.set(null);
   }
 
-  /**
-   * Vérifier si l'utilisateur est connecté
-   */
   isLoggedIn(): boolean {
-    return this.user() !== null && this.user() !== undefined;
+    return this.user() !== null ;
   }
 
-  setUser(user: User): void {
-    this.user.set(user);
-  }
+
 }

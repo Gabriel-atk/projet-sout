@@ -1,16 +1,14 @@
-export interface EventModel {
-  uuid: string;
-  name: string;
-  description: string;
-  location: string;
-  capacity: number;
-  imageUrl: string[];
-  venue?: string;
-  startDateTime: string;
-  endDateTime?: string;
-  organizerId: string;
-  expired?: boolean;
-
+export interface EventOrganizerSide {
+  startDateTime: string,
+  endDateTime: string,
+  images: string[],
+  uuid: string,
+  name: string,
+  description: string,
+  capacity: number,
+  organizerId: string,
+  organizerName: string,
+  organizerEmail: string,
 }
 
 // Interface pour les requêtes de création/modification d'événements

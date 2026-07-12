@@ -2,13 +2,45 @@ import {inject, Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {catchError, map, Observable, of} from 'rxjs';
 import {EventUserSide} from '../pages/user/evenements/event/event-card';
+import {environment} from '../../environments/environment';
 
+export interface PurchaseTicketRequest{
+  buyerId: string;
+  templateTrackingId: string;
+  nombreTicketAchete: number;
+}
+export interface PurchasedTicket{
+  ticketTrackingId: string;
+  buyerName: string;
+  nombreTicketAchete: number;
+  qrCodeUrl: string;
+  voucherCode: string;
+  status: string;
+  type: string;
+  prixUnitaire: number;
+  prixTotal: number;
+  templateTrackingId: string;
+  eventTrackingId: string;
+}
+export interface TicketTemplate {
+  trackingId: string;
+  type: 'VIP' | 'REGULAR';
+  price: number;
+  nombreTicketDisponible: number;
+}
+interface TicketTemplateApi {
+  trackingId: string;
+  type: 'VIP' | 'REGULAR';
+  price: number;
+  nombreTicketDisponible: number;
+  nombreTicketRestant: number;
+}
 @Injectable({
   providedIn: 'root'
 })
 export class EventsService {
   private http = inject(HttpClient);
-  private readonly API_URL = 'http://localhost:8080/api';
+  private readonly API_URL = environment.apiURL;
 
   getAllEvents(): Observable<EventUserSide[]>{
     return this.http.get<EventUserSide[]>(`${this.API_URL}/events/all`).pipe(
@@ -36,22 +68,9 @@ export class EventsService {
 
   searchEvents(list: EventUserSide[], query: string): EventUserSide[] {
     if (!query || !query.trim()) {
-      //return this.getAllEvents();
       return list;
     }
-
     const searchTerm= query.toLowerCase().trim();
-
-    /*return this.getAllEvents().pipe(
-      map((events) => {
-        const searchTerm = query.toLowerCase().trim();
-        return events.filter(event =>
-          event.name.toLowerCase().includes(searchTerm) ||
-          event.description.toLowerCase().includes(searchTerm) ||
-          event.organizerName.toLowerCase().includes(searchTerm)
-        );
-      })
-    );*/
     return list.filter(event =>
       event.name.toLowerCase().includes(searchTerm) ||
       event.description.toLowerCase().includes(searchTerm) ||
@@ -94,5 +113,44 @@ export class EventsService {
     });
 
     return sorted;
+  }
+
+  /*purchaseTicket(purchaseData: PurchaseTicketRequest): Observable<PurchasedTicket | null> {
+    return this.http.post<PurchasedTicket>(
+      `${this.API_URL}/purchased_ticket/purchase`,
+      purchaseData
+    ).pipe(
+      catchError((error) => {
+        console.error('Erreur lors de l\'achat du ticket:', error);
+        return of(null);
+      })
+    )
+  }*/
+
+  purchaseTicket(purchaseData: PurchaseTicketRequest): Observable<PurchasedTicket> {
+    return this.http.post<PurchasedTicket>(
+      `${this.API_URL}/purchased_ticket/purchase`,
+      purchaseData
+    );
+  }
+
+  getTicketTemplatesByEvent(eventTrackingId: string): Observable<TicketTemplate[]> {
+    return this.http.get<TicketTemplateApi[]>(
+      `${this.API_URL}/ticket_template/getAllForOne/${eventTrackingId}`
+    ).pipe(
+      map(apiTemplates =>
+        (apiTemplates || []).map(t=>({
+          trackingId: t.trackingId,
+          type: t.type,
+          price: t.price,
+          nombreTicketDisponible: t.nombreTicketRestant ?? t.nombreTicketDisponible
+
+        })
+      )),
+      catchError((error) => {
+        console.error('Erreur lors du chargement des templates:', error);
+        return of([]);
+      })
+    );
   }
 }

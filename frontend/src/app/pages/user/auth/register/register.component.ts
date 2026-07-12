@@ -1,4 +1,4 @@
-import {Component, inject, OnDestroy} from '@angular/core';
+import {ChangeDetectorRef, Component, inject, OnDestroy} from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -26,6 +26,7 @@ export class Register implements OnDestroy{
   private registerService=inject(RegisterService)
   private router=inject(Router);
   private fb=inject(FormBuilder)
+  private cdr=inject(ChangeDetectorRef);
 
   private registerSubscription: Subscription | null = null;
   errorMessage: string = '';
@@ -88,6 +89,7 @@ export class Register implements OnDestroy{
         this.isLoading = true;
         this.errorMessage = '';
         this.successMessage = '';
+        this.cdr.detectChanges();
 
         const fullPhone = `${this.inscriptionForm.value.indicatif}${this.inscriptionForm.value.telephone}`;
 
@@ -106,33 +108,27 @@ export class Register implements OnDestroy{
             this.isLoading = false;
             if (user) {
               console.log('Inscription réussie', user);
-              this.successMessage = 'Inscription réussie ! Redirection en cours...';
-
+              this.successMessage = 'Inscription réussie !  Veuillez vous connecter';
+              this.cdr.detectChanges();
               // Rediriger vers la page d'accueil après 1.5 secondes
               setTimeout(() => {
-                this.navigateHome();
+                this.router.navigate(['/login']);
               }, 1500);
             }else {
               this.errorMessage='Une erreur est survenue lors de l\'inscription';
+              this.cdr.detectChanges();
             }
           },
           error: (error)=> {
             this.isLoading = false;
             console.error('Erreur d\'inscription', error);
-            if (error.status === 409) {
-              this.errorMessage = 'Cet email est déjà utilisé';
-            } else if (error.status === 400) {
-              this.errorMessage = 'Données invalides. Veuillez vérifier vos informations';
-            } else {
-              this.errorMessage = 'Une erreur est survenue. Veuillez réessayer';
-            }
+            this.errorMessage = error.error?.message || 'Une erreur est survenue. Veuillez réessayer.';
+            this.cdr.detectChanges();
           }
         });
       }else {
-        // Marquer tous les champs comme touchés pour afficher les erreurs
-        Object.keys(this.inscriptionForm.controls).forEach(key => {
-          this.inscriptionForm.get(key)?.markAsTouched();
-        });
+        this.inscriptionForm.markAllAsTouched();
+        this.cdr.detectChanges();
       }
     }
 

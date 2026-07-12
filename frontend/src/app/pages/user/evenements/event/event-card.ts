@@ -1,5 +1,6 @@
-import { Component, Input } from '@angular/core';
+import {Component, inject, Input} from '@angular/core';
 import {formatDate, CommonModule} from '@angular/common';
+import {Router} from '@angular/router';
 
 export interface EventUserSide {
 
@@ -29,9 +30,13 @@ export interface EventUserSide {
 })
 export class EventCard {
   @Input() event!: EventUserSide;
-
+  private router=inject(Router)
   onReserve(){
-
+    if (this.isExpired()){
+      alert('Cet événement est expiré et ne peut plus être réservé.');
+      return;
+    }
+    this.router.navigate(['/purchase-ticket', this.event.uuid]);
   }
 
   formatDate(dateString: string): string {
@@ -51,5 +56,9 @@ export class EventCard {
       return new Date(this.event.startDateTime) < new Date();
     }
     return new Date(this.event.endDateTime) < new Date();
+  }
+
+  showDetails() {
+    this.router.navigate(['/event-detail', this.event.uuid]);
   }
 }

@@ -1,0 +1,215 @@
+<!-- src/app/pages/user/evenements/event-detail/event-detail.html -->
+<div class="min-h-screen bg-gray-50 font-sans">
+
+  <!-- Loader -->
+  @if (isLoading) {
+    <div class="flex flex-col items-center justify-center min-h-screen gap-4 text-gray-600 bg-white">
+      <div class="w-16 h-16 border-4 border-gray-100 border-t-orange-600 rounded-full animate-spin"></div>
+      <p class="text-lg font-medium animate-pulse">Chargement de l'expérience...</p>
+    </div>
+  }
+
+  <!-- Erreur -->
+  @if (errorMessage && !isLoading) {
+    <div class="flex flex-col items-center justify-center min-h-screen gap-6 text-gray-600">
+      <div class="bg-red-50 p-6 rounded-full">
+        <svg class="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+      </div>
+      <h2 class="text-2xl font-bold text-gray-900">Oups !</h2>
+      <p class="text-gray-500">{{ errorMessage }}</p>
+      <button (click)="goBack()" class="px-8 py-3 bg-gray-900 text-white rounded-xl font-semibold hover:bg-orange-600 transition-colors shadow-lg">
+        Retour aux événements
+      </button>
+    </div>
+  }
+
+  <!-- Contenu Principal -->
+  @if (event && !isLoading) {
+    <div class="relative pb-20">
+
+      <!-- HERO SECTION (Image + Titre) -->
+      <div class="relative h-[50vh] min-h-[400px] w-full overflow-hidden">
+        <!-- Image de fond -->
+        <img [src]="getEventImage()" [alt]="event.name" class="absolute inset-0 w-full h-full object-cover transform hover:scale-105 transition-transform duration-[20s]">
+
+        <!-- Overlay Dégradé -->
+        <div class="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent"></div>
+
+        <!-- Bouton Retour (Glassmorphism) -->
+        <button (click)="goBack()"
+                class="absolute top-6 left-6 z-20 flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white hover:bg-white/30 transition-all group">
+          <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+          <span class="font-medium text-sm">Retour</span>
+        </button>
+
+        <!-- Contenu Hero -->
+        <div class="absolute bottom-0 left-0 right-0 p-6 pb-12 z-10">
+          <div class="max-w-7xl mx-auto">
+            <!-- Badges -->
+            <div class="flex flex-wrap gap-3 mb-4">
+              <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-white bg-orange-600 shadow-lg shadow-orange-900/20">
+                {{ event.type || 'Événement' }}
+              </span>
+              <span [ngClass]="{
+                     'bg-green-500': getStatusClass() === 'status-upcoming',
+                     'bg-amber-500': getStatusClass() === 'status-ongoing',
+                     'bg-red-500': getStatusClass() === 'status-ended'
+                   }" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider text-white shadow-lg">
+                {{ getStatusText() }}
+              </span>
+            </div>
+
+            <!-- Titre -->
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-4 leading-tight drop-shadow-lg">
+              {{ event.name }}
+            </h1>
+
+            <!-- Info Rapide -->
+            <div class="flex flex-wrap items-center gap-6 text-gray-200 text-sm md:text-base font-medium">
+              <div class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+                {{ formatDate(event.startDateTime) }}
+              </div>
+              <div class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                {{ event.location || 'En ligne' }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GRID LAYOUT -->
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 -mt-8 relative z-20">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+          <!-- COLONNE GAUCHE (Description & Détails) -->
+          <div class="lg:col-span-2 space-y-8">
+
+            <!-- Carte Description -->
+            <div class="bg-white rounded-2xl p-8 shadow-xl shadow-gray-200/50">
+              <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+                <span class="w-1 h-8 bg-orange-500 rounded-full"></span>
+                À propos de l'événement
+              </h2>
+              <div class="prose prose-lg prose-orange text-gray-600 max-w-none leading-relaxed">
+                <p>{{ event.description || 'Aucune description disponible pour cet événement.' }}</p>
+              </div>
+            </div>
+
+            <!-- Carte Infos Pratiques -->
+            <div class="bg-white rounded-2xl p-8 shadow-xl shadow-gray-200/50">
+              <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+                <span class="w-1 h-8 bg-orange-500 rounded-full"></span>
+                Infos pratiques
+              </h2>
+
+              <div class="grid md:grid-cols-2 gap-6">
+                <!-- Bloc Capacité -->
+                <div class="flex items-start gap-4 p-4 rounded-xl bg-gray-50 border border-gray-100">
+                  <div class="p-3 bg-white rounded-lg shadow-sm text-orange-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-sm font-bold text-gray-900 uppercase tracking-wide">Capacité</p>
+                    <p class="text-gray-600 mt-1">{{ event.capacity }} places</p>
+                  </div>
+                </div>
+
+                <!-- Bloc Horaires -->
+                <div class="flex items-start gap-4 p-4 rounded-xl bg-gray-50 border border-gray-100">
+                  <div class="p-3 bg-white rounded-lg shadow-sm text-orange-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-sm font-bold text-gray-900 uppercase tracking-wide">Horaires</p>
+                    <p class="text-gray-600 mt-1">{{ formatTime(event.startDateTime) }} - {{ formatTime(event.endDateTime) }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- COLONNE DROITE (Sidebar Sticky) -->
+          <div class="space-y-6">
+
+            <!-- Carte Action (Sticky) -->
+            <div class="bg-white rounded-2xl shadow-xl shadow-gray-200/50 overflow-hidden border border-gray-100 sticky top-6">
+              <div class="p-6 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+                <p class="text-sm text-gray-300 mb-1">Statut de l'événement</p>
+                <div class="flex items-center gap-2">
+                  <span class="relative flex h-3 w-3">
+                    @if(getStatusText() === 'En cours') {
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    }
+                    <span [ngClass]="{
+                     'bg-green-500': getStatusClass() === 'status-upcoming',
+                     'bg-amber-500': getStatusClass() === 'status-ongoing',
+                     'bg-red-500': getStatusClass() === 'status-ended'
+                   }" class="relative inline-flex rounded-full h-3 w-3"></span>
+                  </span>
+                  <span class="font-bold text-lg">{{ getStatusText() }}</span>
+                </div>
+              </div>
+
+              <div class="p-6">
+                @if (getStatusText() !== 'Terminé') {
+                  <button (click)="goToPurchase()"
+                          class="w-full group relative flex items-center justify-center gap-3 px-6 py-4 bg-orange-600 text-white rounded-xl font-bold text-lg hover:bg-orange-700 transition-all shadow-lg hover:shadow-orange-500/30 hover:-translate-y-0.5">
+                    <span>Réserver ma place</span>
+                    <svg class="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                    </svg>
+                  </button>
+                  <p class="text-center text-xs text-gray-400 mt-4">Paiement sécurisé & Billet instantané</p>
+                } @else {
+                  <div class="w-full px-6 py-4 bg-gray-100 text-gray-500 rounded-xl font-semibold text-center border border-gray-200">
+                    Les ventes sont fermées
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Carte Organisateur -->
+            <div class="bg-white rounded-2xl p-6 shadow-lg shadow-gray-200/50 border border-gray-100">
+              <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Organisé par</h3>
+
+              <div class="flex items-center gap-4 mb-4">
+                <div class="w-14 h-14 bg-gradient-to-br from-orange-100 to-orange-200 rounded-full flex items-center justify-center text-orange-600 shadow-inner">
+                  <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                  </svg>
+                </div>
+                <div class="overflow-hidden">
+                  <p class="font-bold text-gray-900 truncate">{{ event.organizerName }}</p>
+                  <p class="text-sm text-gray-500 truncate">{{ event.organizerEmail }}</p>
+                </div>
+              </div>
+
+              <button class="w-full py-2.5 px-4 rounded-lg border border-gray-200 text-gray-700 font-medium text-sm hover:bg-gray-50 hover:text-orange-600 hover:border-orange-200 transition-colors flex items-center justify-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+                Contacter
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

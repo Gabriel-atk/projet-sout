@@ -1,5 +1,5 @@
 <!-- header.component.html -->
-<nav class="bg-white shadow-sm">
+<nav class="bg-gradient-to-br from-orange-50 via-white to-orange-50 ">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16">
       <!-- Logo -->
@@ -20,19 +20,19 @@
         <a routerLink="/"
            routerLinkActive="!text-black border-b-2 border-black"
            [routerLinkActiveOptions]="{exact: true}"
-           class="text-gray-500 font-inter hover:text-black font-bold transition">Accueil</a>
+           class="text-gray-600 font-inter hover:text-black font-bold transition">Accueil</a>
         <a routerLink="/events"
            routerLinkActive="!text-black border-b-2 border-black"
            [routerLinkActiveOptions]="{exact: false}"
-           class="text-gray-500 font-inter font-bold hover:text-black transition">Événements</a>
-        <a routerLink="/reservations"
+           class="text-gray-600 font-inter font-bold hover:text-black transition">Événements</a>
+        <a routerLink="/my-tickets"
            routerLinkActive="!text-black border-b-2 border-black"
            [routerLinkActiveOptions]="{exact: false}"
-           class="text-gray-500 font-inter font-bold hover:text-black transition">Mes tickets</a>
+           class="text-gray-600 font-inter font-bold hover:text-black transition">Mes tickets</a>
         <a routerLink="/contact"
            routerLinkActive="!text-black border-b-2 border-black"
            [routerLinkActiveOptions]="{exact: false}"
-           class="text-gray-500 font-inter font-bold hover:text-black transition">Contact</a>
+           class="text-gray-600 font-inter font-bold hover:text-black transition">Contact</a>
       </div>
 
       <!-- Search & Auth Buttons -->
@@ -63,12 +63,20 @@
                     <path d="M12 2C9.51472 2 7.5 4.01472 7.5 6.5C7.5 8.98528 9.51472 11 12 11C14.4853 11 16.5 8.98528 16.5 6.5C16.5 4.01472 14.4853 2 12 2Z" fill="black"/><path d="M12 12.5C8.73708 12.5 6.14047 14.213 4.77277 16.7569C4.19622 17.8293 4.41122 18.9365 5.05292 19.7348C5.67643 20.5105 6.69558 21 7.79526 21H16.2047C17.3044 21 18.3236 20.5105 18.9471 19.7348C19.5888 18.9365 19.8038 17.8293 19.2272 16.7569C17.8595 14.213 15.2629 12.5 12 12.5Z" fill="black"/>
                   </svg>
                 </div>
+                <div class="flex flex-col text-left text-sm leading-tight font-inter">
+                  <span class="font-bold text-gray-900">
+                    {{ user()?.firstName }} {{ user()?.lastName }}
+                  </span>
+                  <span class="text-gray-700">
+                    {{ user()?.email }}
+                  </span>
+                </div>
               </button>
               @if (isProfileMenuOpen) {
-                <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50 border border-gray-200">
+                <div class="absolute right-0 mt-2 w-48 bg-gradient-to-br from-orange-50 via-white to-orange-50 rounded-lg shadow-lg py-2 z-50 border border-gray-200 font-inter text-center">
                   <div class="px-4 py-2 border-b border-gray-200">
-                    <p class="text-sm font-semibold text-gray-900">{{ user()?.firstName }} {{ user()?.lastName }}</p>
-                    <p class="text-xs text-gray-500">{{ user()?.email }}</p>
+                    <p class="text-sm font-bold text-gray-900">{{ user()?.firstName }} {{ user()?.lastName }}</p>
+                    <p class="text-xs text-gray-700">{{ user()?.email }}</p>
                   </div>
                   <a routerLink="/profile" (click)="closeProfileMenu()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                     Mon profil
@@ -79,7 +87,7 @@
                   <a routerLink="/parametres" (click)="closeProfileMenu()" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                     Paramètres
                   </a>
-                  <div class="border-t border-gray-200 mt-2">
+                  <div class="border-t border-gray-200 mt-2 text-center">
                     <button
                       (click)="logout()"
                       class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"

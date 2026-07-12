@@ -2,7 +2,8 @@ import { Routes } from '@angular/router';
 import { MainLayout } from './layout/main-layout/main-layout';
 import { OrganizerLayout } from './layout/organizer-layout/organizer-layout';
 //import { Evenements } from './pages/user/evenements/events-list/evenements';
-import { authGuard } from './pages/user/auth/auth.guard';
+import { authGuard } from './guards/auth.guard';
+import {organizerAuthGuard} from './guards/organizer.auth.guard';
 
 export const routes: Routes = [
   // Routes avec le header principal (MainLayout)
@@ -20,6 +21,17 @@ export const routes: Routes = [
         //component: Evenements,
         loadComponent: () => import('./pages/user/evenements/events-list/evenements').then(m => m.Evenements),
         title: 'Événements - EventTicket'
+      },
+      {
+        path: 'purchase-ticket/:eventId',
+        loadComponent: () => import('./pages/user/purchase-ticket/purchase-ticket').then(m => m.PurchaseTicket),
+        title: 'Acheter un Billet - EventTicket',
+        canActivate: [authGuard]
+      },
+      {
+        path: 'event-detail/:eventId',
+        loadComponent: () => import('./pages/user/evenements/event-detail/event-detail').then(m => m.EventDetail),
+        title: 'Détails de l\'Événement - EventTicket'
       },
       {
         path: 'inscription',
@@ -57,15 +69,32 @@ export const routes: Routes = [
     component: OrganizerLayout,
     children: [
       {
-        path: 'auth',
-        loadComponent: () => import('./pages/organizer/organizer-auth/organizer-auth').then(m => m.OrganizerAuth),
+        path: 'register',
+        loadComponent: () => import('./pages/organizer/organizer-register/organizer-register').then(m => m.OrganizerRegister),
+        title: 'Inscription Organisateur - EventTicket'
+      },
+      {
+        path: 'login',
+        loadComponent: () => import('./pages/organizer/organizer-login/organizer-login').then(m => m.OrganizerLogin),
         title: 'Connexion Organisateur - EventTicket'
       },
       {
         path: 'dashboard',
         loadComponent: () => import('./pages/organizer/organizer-dashboard/organizer-dashboard').then(m => m.OrganizerDashboard),
         title: 'Dashboard Organisateur - EventTicket',
-        //canActivate: [authGuard] // Utilisez un guard spécifique pour les organisateurs si nécessaire
+        canActivate: [organizerAuthGuard], // Utilisez un guard spécifique pour les organisateurs si nécessaire
+        children: [
+          {
+            path: 'events',
+            loadComponent: () => import('./pages/organizer/organizer-dashboard/organizer-events/organizer-events').then(m => m.OrganizerEvents),
+            title: 'Mes Événements - Dashboard Organisateur - EventTicket'
+          },
+          {
+            path: 'tableau-bord',
+            loadComponent: () => import('./pages/organizer/organizer-dashboard/tableau-bord/tableau-bord').then(m => m.TableauBord),
+            title: 'Aperçu - Dashboard Organisateur - EventTicket'
+          }
+        ]
       },
       {
         path: '',
