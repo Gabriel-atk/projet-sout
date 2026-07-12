@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface EventsRepository extends JpaRepository<Event, Integer> {
+public interface EventsRepository extends JpaRepository<Event, Long> {
     Optional<Event> getEventByTrackingId(@Param("trackingId") UUID trackingId);
 
     @Query("select e from Event e where e.trackingId = :trackingId")

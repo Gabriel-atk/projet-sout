@@ -7,7 +7,6 @@ import lombok.*;
 
 import java.util.UUID;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name="tickets")
 @Getter
@@ -30,13 +29,28 @@ public class Ticket extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private TicketStatus ticketStatus;
 
-    @ManyToOne
-    @JoinColumn(name = "participant_id")
-    private Participant participant;
+    private float price;
 
-    @ManyToOne
-    @JoinColumn(name = "event_id")
+    private int numberOfAvailableTickets;
+
+    @Builder.Default
+    private int numberOfTicketsSold = 0;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "organizer_id", nullable = false)
+    private Organizer organizer;
 
+
+    public boolean isAvailable() {
+        return numberOfAvailableTickets == -1 || numberOfTicketsSold < numberOfAvailableTickets;
+    }
+
+    public int getNombreRestant() {
+        if (numberOfAvailableTickets == -1) return -1;
+        return Math.max(0, numberOfAvailableTickets - numberOfTicketsSold);
+    }
 }
